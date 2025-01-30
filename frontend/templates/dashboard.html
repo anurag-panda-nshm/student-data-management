@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/css/admin.css">
+    <link rel="stylesheet" href="../static/css/students.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Face Recognition Attendance System</h1>
+            <nav id="mainNav">
+                <a href="index.html" id="homeLink">Home</a>
+                <a href="dashboard.html" class="active" id="loginLink">Admin Dashboard</a>
+            </nav>
+        </header>
+
+        <!-- Admin Dashboard Section -->
+         <h2>Admin Dashboard</h2>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Student Management</h1>
+                <button class="primary-btn" onclick="openAddStudentModal()">
+                    <i class="fas fa-plus"></i> Add New Student
+                </button>
+            </header>
+
+            <!-- Search and Filter Section -->
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <input type="text" id="studentSearch" class="student-name" placeholder="Search students...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="filter-box">
+                    <select id="departmentFilter" class="student-department">
+                        <option value="">All Departments</option>
+                        <option value="CS">CSE</option>
+                        <option value="AIML">AIML</option>
+                        <option value="DS">DS</option>
+                    </select>
+                    <select id="yearFilter" class="student-year">
+                        <option value="">All Years</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Students Table -->
+            <div class="table-container">
+                <table id="studentsList">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Photo</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Year</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsList">
+                        <!-- Student rows will be dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Student Modal -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeStudentModal()">&times;</span>
+            <h2 id="modalTitle">Add New Student</h2>
+            <form id="studentForm" action="/api/students" method="post">
+                <div class="form-group">
+                    <label for="studentId">Student ID</label>
+                    <input type="text" id="studentId" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentName">Full Name</label>
+                    <input type="text" id="studentName" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentEmail">Email</label>
+                    <input type="email" id="studentEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentDepartment">Department</label>
+                    <select id="studentDepartment" required>
+                        <option value="CS">CSE</option>
+                        <option value="AIML">AIML</option>
+                        <option value="DS">DS</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="studentYear">Year</label>
+                    <select id="studentYear" required>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="studentPhoto">Student Photo</label>
+                    <input type="file" id="studentPhoto" accept="image/*" required>
+                    <div id="photoPreview" class="photo-preview"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="secondary-btn" onclick="closeStudentModal()">Cancel</button>
+                    <button type="submit" class="primary-btn" onclick="submitStudentForm(event)">Save Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Delete</h2>
+            <p>Are you sure you want to delete this student? This action cannot be undone.</p>
+            <div class="form-actions">
+                <button class="secondary-btn" onclick="closeDeleteModal()">Cancel</button>
+                <button class="danger-btn" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+        <section id="dashboardSection" class="section">
+            <div class="dashboard">
+                <div class="dashboard-controls">
+                    <div class="search-box">
+                        <input type="text" id="searchStudent" placeholder="Search by student ID or name">
+                    </div>
+                    <div class="date-filters">
+                        <input type="date" id="startDate">
+                        <input type="date" id="endDate">
+                        <button id="generateReport" class="btn primary">Generate Report</button>
+                        <section class="export-options">
+                            <button class="btn primary" onclick="exportReport('pdf')">Export PDF</button>
+                            <button class="btn primary" onclick="exportReport('csv')">Export CSV</button>
+                            <button class="btn primary" onclick="printReport()">Print Report</button>
+                        </section>
+                    </div>
+                </div>
+                <div class="attendance-table">
+                    <table id="attendanceTable">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Time In</th>
+                                <th>Time Out</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceData">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+<script src="../static/js/admin_dashboard.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="../static/js/students.js"></script>
+</body>
+</html>
